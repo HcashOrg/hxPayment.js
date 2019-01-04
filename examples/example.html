@@ -23,8 +23,8 @@
         function onGetAccount() {
             hxPay.getUserAddress()
                 .then(function (account) {
-                    console.log('account', account);
-                    document.getElementById("query_balances_address_input").value = account;
+                    console.log('account', account.address);
+                    document.getElementById("query_balances_address_input").value = address;
                 }, function (err) {
                     console.log('get account error', err)
                 })

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8">
+        <title>Red Packet Dapp Demo</title>
+        <script src="../hxjs.js"></script>
+        <script type="text/javascript" src="../dist/hxPay.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <style>
+            .row {
+                margin: 0 auto;
+                width: 80%;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <h1 class="row">Red Packet Dapp demo</h1>
+            <div class="row">
+                <span>My Address: </span> <span>{{myAddress}}</span>
+            </div>
+            <div class="row">
+                <span>Red Packet Contract: </span> <span>{{contractAddress}}</span>
+            </div>
+            <div class="row">
+                <span>Contract Balance: </span> <span>{{contractHxBalance/100000}} HX</span>
+            </div>
+            <div class="row">
+                <span>Bonus: </span> <span>{{myBonus/100000}} HX</span>
+            </div>
+            <div class="row">
+                <button @click="receiveFromRedPacket">Receive</button>
+            </div>
+            <div class="row">
+                <span>Serial Number: </span> <span>{{lastSerialNumber}}</span>
+            </div class="row">
+            <div class="row">
+                <span>Response: </span> <span>{{lastResponse}}</span>
+            </div>
+        </div>
+        <script src="./redpacket.js"></script>
+    </body>
+</html>

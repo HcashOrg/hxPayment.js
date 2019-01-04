@@ -46,8 +46,8 @@ var defaultOptions = function () {
 		// if debug mode, should open testnet nano and reset the callback
 		debug: false,
 
-		gasPrice: undefined,// 10 ,
-		gasLimit: undefined //20000
+		gasPrice: undefined,// 1 ,
+		gasLimit: undefined //10000
 	};
 };
 
