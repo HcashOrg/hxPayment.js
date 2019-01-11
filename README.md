@@ -1,4 +1,4 @@
-# hxPay(in development)
+# hxPay
 
 This is the hx payment JavaScript API. Users can use it in browser on both PC and mobile. Users can do HX payment through [Chrome extension]  with it.
 
@@ -10,9 +10,6 @@ Use `npm` to install dependencies:
 ```
 npm install
 ```
-
- **Notice:The official version of the package in NPMJS is `hxpay.js`, not `hxpay` and etc.**
-
 
 Use `npm run build` to package the hxPay:
 
@@ -33,6 +30,7 @@ Here you should see a bunch of js files.
 For the usage of hxPay please refer to this example:
 
 * [example](examples/example.html) 
+* [Red Packet Dapp demo](examples/redpacket_dapp.html)
 
 ***
 
