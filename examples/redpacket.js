@@ -1,15 +1,16 @@
 const HxPay = require("hxpay");
 const hxPay = new HxPay();
 
-let {
+const {
     PrivateKey,
     PublicKey,
     Address,
     key,
     TransactionBuilder,
-    TransactionHelper
+    TransactionHelper,
+    Apis,
+    ChainConfig
 } = hx_js;
-let { Apis, ChainConfig } = hx_js.bitshares_ws;
 
 const app = new Vue({
     el: '#app',
@@ -20,18 +21,23 @@ const app = new Vue({
         contractHxBalance: 0,
         myBonus: 0,
         hxConfig: null,
-        apiInstance: null,
+        apisInstance: null,
 
         lastSerialNumber: null,
         lastResponse: null,
+        lastTxid: null,
     },
     mounted() {
         hxPay.getConfig()
             .then((config) => {
                 console.log('config', config);
+                if (!config) {
+                    alert("please install hx extension wallet first");
+                    return;
+                }
                 this.hxConfig = config;
                 ChainConfig.setChainId(config.chainId);
-                this.apiInstance = Apis.instance(config.network, true);
+                this.apisInstance = Apis.instance(config.network, true);
                 this.loadInfo();
             }, (err) => {
                 console.log('get config error', err);
@@ -50,13 +56,23 @@ const app = new Vue({
 
     },
     methods: {
-        hxPayListener(serialNumber, resp) {
+        hxPayListener(serialNumber, resp, name) {
             console.log("resp: " + JSON.stringify(resp));
             this.lastSerialNumber = serialNumber;
-            this.lastResponse = resp;
+            if (name === 'txhash') {
+                const txid = resp;
+                this.lastTxid = txid;
+                hxPay.waitTransaction(this.apisInstance, txid)
+                    .then((tx) => {
+                        console.log("found tx", tx);
+                        alert("transaction successfully");
+                    }, this.showError);
+            } else {
+                this.lastResponse = resp;
+            }
         },
         receiveFromRedPacket() {
-            this.apiInstance.init_promise
+            this.apisInstance.init_promise
                 .then(() => {
                     var assetId = "1.3.0";
                     var to = this.contractAddress;
@@ -64,13 +80,21 @@ const app = new Vue({
                     var callFunction = "getBonus"
                     var callArgs = "_";
                     hxPay.simulateCall(assetId, to, value, callFunction, callArgs, {
-                        qrcode: {
-                            showQRCode: true
-                        },
-                        goods: {
-                            name: "test",
-                            desc: "test goods"
-                        },
+                        gasPrice: '0.00001',
+                        gasLimit: 5000,
+                        listener: this.hxPayListener.bind(this)
+                    });
+                }).catch(this.showError);
+        },
+        testGetState() {
+            this.apisInstance.init_promise
+                .then(() => {
+                    var assetId = "1.3.0";
+                    var to = this.contractAddress;
+                    var value = 0;
+                    var callFunction = "getState"
+                    var callArgs = "_";
+                    hxPay.simulateCall(assetId, to, value, callFunction, callArgs, {
                         gasPrice: '0.00001',
                         gasLimit: 5000,
                         listener: this.hxPayListener.bind(this)
@@ -78,9 +102,9 @@ const app = new Vue({
                 }).catch(this.showError);
         },
         loadInfo() {
-            this.apiInstance.init_promise
+            this.apisInstance.init_promise
                 .then(() => {
-                    TransactionHelper.getContractBalances(this.apiInstance, this.contractAddress)
+                    TransactionHelper.getContractBalances(this.apisInstance, this.contractAddress)
                         .then(balances => {
                             console.log("contract balances: ", balances);
                             this.contractHxBalance = 0;
@@ -92,7 +116,7 @@ const app = new Vue({
                         }).catch(this.showError);
                     if (this.myPubKey) {
                         TransactionHelper.invokeContractOffline(
-                            this.apiInstance,
+                            this.apisInstance,
                             this.myPubKey,
                             this.contractAddress,
                             'checkBonus',

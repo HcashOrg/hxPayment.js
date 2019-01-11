@@ -245,7 +245,7 @@ window.addEventListener('message', function (resp) {
 
     var callback = callbackMap[key];
     if (typeof callback === "function") {
-        callback(key, resp.data.resp);
+        callback(key, resp.data.resp, resp.data.name);
     }
 
     //delete callbackMap[key];
@@ -6828,13 +6828,13 @@ HxPay.prototype = {
 	getUserAddress: function () {
 		return this.postMessageRequest('getUserAddress', {}, 'getUserAddress', 5000);
 	},
-	getAssets: function (network, chainId) {
-		var ChainConfig = hx_js.bitshares_ws.ChainConfig;
-		var Apis = hx_js.bitshares_ws.Apis;
-
-		ChainConfig.setChainId(chainId);
-		var chainRpcUrl = network;
-		var apisInstance = window.apisInstance || Apis.instance(chainRpcUrl, true);
+	getChainConfigObject: function () {
+		return hx_js.ChainConfig;
+	},
+	getApis: function () {
+		return hx_js.Apis;
+	},
+	getAssets: function (apisInstance) {
 		return apisInstance.init_promise.then(function () {
 			return apisInstance.db_api().exec("list_assets", ["", 100]).then(function (r) {
 				var assets = r.sort(function (a, b) {
@@ -6850,13 +6850,7 @@ HxPay.prototype = {
 			});
 		});
 	},
-	getBalances: function (network, chainId, userAddress) {
-		var ChainConfig = hx_js.bitshares_ws.ChainConfig;
-		var Apis = hx_js.bitshares_ws.Apis;
-
-		ChainConfig.setChainId(chainId);
-		var chainRpcUrl = network;
-		var apisInstance = window.apisInstance || Apis.instance(chainRpcUrl, true);
+	getBalances: function (apisInstance, userAddress) {
 		return apisInstance.init_promise.then(function () {
 			return apisInstance.db_api().exec("get_addr_balances", [userAddress]).then(function (r) {
 				var coreCoinBalances = r.sort(function (a, b) {
@@ -6872,17 +6866,32 @@ HxPay.prototype = {
 			});
 		});
 	},
-	getTransaction: function (network, chainId, txid) {
-		var ChainConfig = hx_js.bitshares_ws.ChainConfig;
-		var Apis = hx_js.bitshares_ws.Apis;
-
-		ChainConfig.setChainId(chainId);
-		var chainRpcUrl = network;
-		var apisInstance = window.apisInstance || Apis.instance(chainRpcUrl, true);
+	getTransaction: function (apisInstance, txid) {
 		return apisInstance.init_promise.then(function () {
 			return apisInstance.init_promise.then(function () {
 				return apisInstance.db_api().exec("get_transaction_by_id", [txid]);
 			});
+		});
+	},
+	waitTransaction: function (apisInstance, txid, timeout) {
+		timeout = timeout || 8000;
+		var hxPay = this;
+		return new Promise(function (resolve, reject) {
+			var executedTimeout = 0;
+			var lastError = "transaction timeout, maybe transaction not successfully";
+			var intervalFunc = function () {
+				if (executedTimeout >= timeout) {
+					clearInterval(intervalHandler);
+					reject(lastError);
+					return;
+				}
+				executedTimeout += 2000;
+				hxPay.getTransaction(apisInstance, txid).then(function (tx) {
+					clearInterval(intervalHandler);
+					resolve(tx);
+				}).catch(function (err) {});
+			};
+			var intervalHandler = setInterval(intervalFunc, 2000);
 		});
 	},
 

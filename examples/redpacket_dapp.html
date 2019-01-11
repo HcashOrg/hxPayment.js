@@ -1,44 +1,133 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf8">
-        <title>Red Packet Dapp Demo</title>
-        <script src="../hxjs.js"></script>
-        <script type="text/javascript" src="../dist/hxPay.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <style>
-            .row {
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8">
+    <title>Red Packet Dapp Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="../hxjs.js"></script>
+    <script type="text/javascript" src="../dist/hxPay.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .row {
                 margin: 0 auto;
                 width: 80%;
                 padding: 15px;
+                text-align: center;
+            }
+            #app {
+                max-width: 800px;
+                margin: 20px auto 20px auto;
+            }
+            #app .el-row {
+                text-align: center;
+                margin: 10px 0;
             }
         </style>
-    </head>
-    <body>
-        <div id="app">
-            <h1 class="row">Red Packet Dapp demo</h1>
-            <div class="row">
-                <span>My Address: </span> <span>{{myAddress}}</span>
-            </div>
-            <div class="row">
-                <span>Red Packet Contract: </span> <span>{{contractAddress}}</span>
-            </div>
-            <div class="row">
-                <span>Contract Balance: </span> <span>{{contractHxBalance/100000}} HX</span>
-            </div>
-            <div class="row">
-                <span>Bonus: </span> <span>{{myBonus/100000}} HX</span>
-            </div>
-            <div class="row">
-                <button @click="receiveFromRedPacket">Receive</button>
-            </div>
-            <div class="row">
-                <span>Serial Number: </span> <span>{{lastSerialNumber}}</span>
-            </div class="row">
-            <div class="row">
-                <span>Response: </span> <span>{{lastResponse}}</span>
-            </div>
-        </div>
-        <script src="./redpacket.js"></script>
-    </body>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1 class="row">Red Packet Dapp demo</h1>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    My Address:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{myAddress}}
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Red Packet Contract:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{contractAddress}}
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Contract Balance:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{contractHxBalance/100000}} HX
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Bonus:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{myBonus/100000}} HX
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    <el-button @click="receiveFromRedPacket" type="primary" round>Receive</el-button>
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    <el-button @click="testGetState" type="info" round>GetState</el-button>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Serial Number:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{lastSerialNumber}}
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Tx id:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{lastTxid}}
+                </div>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="12">
+                <div class="grid-content">
+                    Response:
+                </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="grid-content">
+                    {{lastResponse}}
+                </div>
+            </el-col>
+        </el-row>
+    </div>
+    <script src="./redpacket.js"></script>
+</body>
+
 </html>

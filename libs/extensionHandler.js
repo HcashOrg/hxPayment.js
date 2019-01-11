@@ -33,7 +33,7 @@ window.addEventListener('message', function (resp) {
 
     var callback = callbackMap[key];
     if (typeof callback === "function") {
-        callback(key, resp.data.resp);
+        callback(key, resp.data.resp, resp.data.name);
     }
 
     //delete callbackMap[key];

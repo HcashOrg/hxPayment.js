@@ -10,11 +10,15 @@
         var hxPay = new HxPay();
         var serialNumber;
         var enableDebug = true;
+        var apisInstance = null;
+
 
         function onGetConfig() {
             hxPay.getConfig()
                 .then(function (config) {
                     console.log('config', config);
+                    hxPay.getChainConfigObject().setChainId(config.chainId);
+                    apisInstance = Apis.instance(config.network, true);
                 }, function (err) {
                     console.log('get config error', err)
                 })
@@ -32,7 +36,7 @@
 
         function onGetAssets() {
             hxPay.getConfigWithCache().then(function (config) {
-                return hxPay.getAssets(config.network, config.chainId);
+                return hxPay.getAssets(apisInstance);
             }).then(function (assets) {
                 console.log('assets', assets)
             }, function (err) {
@@ -47,7 +51,7 @@
                 return;
             }
             hxPay.getConfigWithCache().then(function (config) {
-                return hxPay.getBalances(config.network, config.chainId, address);
+                return hxPay.getBalances(apisInstance, address);
             }).then(function (balances) {
                 console.log('balances', balances)
             }, function (err) {
@@ -62,7 +66,7 @@
                 return;
             }
             hxPay.getConfigWithCache().then(function (config) {
-                return hxPay.getTransaction(config.network, config.chainId, txid);
+                return hxPay.getTransaction(apisInstance, txid);
             }).then(function (tx) {
                 console.log('tx', tx)
             }, function (err) {
