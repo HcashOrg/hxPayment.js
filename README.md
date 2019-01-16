@@ -29,18 +29,4 @@ Here you should see a bunch of js files.
 
 For the usage of hxPay please refer to this example:
 
-* [example](examples/example.html) 
 * [Red Packet Dapp demo](examples/redpacket_dapp.html)
-
-***
-
-#### Chrome extension wallet
-
-An implementation of chrome extension contributed by community is:
-
-* HxExtWallet
-
-The parameter [`options.callback`](/doc/HxPay_Introduction.md#options) is used for querying transaction result. And it's mainnet by default if you don't specify it. 
-
-* to select mainnet: `callback : HxPay.config.mainnetUrl` (default value)
-* to select testnet: `callback : HxPay.config.testnetUrl` 

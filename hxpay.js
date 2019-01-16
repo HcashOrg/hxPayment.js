@@ -62,11 +62,24 @@ HxPay.prototype = {
 		return this._pay.submit(assetId, to, value, payload, options);
 	},
 
+	defaultConfig: {
+		chainId: '2e13ba07b457f2e284dcfcbd3d4a3e4d78a6ed89a61006cdb7fdad6d67ef0b12',
+		network: 'wss://nodeapi.hxlab.org'
+	},
+
 	postMessageRequest: function (method, data, callbackRegisterMethod, timeout) {
 		timeout = timeout || 10000;
 		data = data || {};
 		return new Promise(function (resolve, reject) {
 			var ended = false;
+			if(typeof(HxExtWallet) === 'undefined') {
+				if(ended) {
+					return;
+				}
+				ended = true;
+				reject("HxExtWallet not installed");
+				return;
+			}
 			HxExtWallet[callbackRegisterMethod](function (config) {
 				if (ended) {
 					return;
