@@ -35,24 +35,33 @@ const app = new Vue({
                     alert("please install hx extension wallet first");
                     return;
                 }
+
                 this.hxConfig = config;
                 ChainConfig.setChainId(config.chainId);
                 this.apisInstance = Apis.instance(config.network, true);
                 this.loadInfo();
+
+                hxPay.getUserAddress()
+                    .then(({ address, pubKey, pubKeyString }) => {
+                        console.log('address', address);
+                        console.log('pubKey', pubKey);
+                        console.log('pubKeyStr', pubKeyString);
+                        this.myAddress = address;
+                        this.myPubKey = pubKey;
+                    }, (err) => {
+                        this.showError(err);
+                    });
+
             }, (err) => {
                 console.log('get config error', err);
                 this.showError(err);
+                const config = hxPay.defaultConfig;
+
+                this.hxConfig = config;
+                ChainConfig.setChainId(config.chainId);
+                this.apisInstance = Apis.instance(config.network, true);
+                this.loadInfo();
             })
-        hxPay.getUserAddress()
-            .then(({ address, pubKey, pubKeyString }) => {
-                console.log('address', address);
-                console.log('pubKey', pubKey);
-                console.log('pubKeyStr', pubKeyString);
-                this.myAddress = address;
-                this.myPubKey = pubKey;
-            }, (err) => {
-                this.showError(err);
-            });
 
     },
     methods: {
