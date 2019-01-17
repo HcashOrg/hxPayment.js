@@ -30,3 +30,4 @@ Here you should see a bunch of js files.
 For the usage of hxPay please refer to this example:
 
 * [Red Packet Dapp demo](examples/redpacket_dapp.html)
+* [TODO List Dapp demo](examples/todolist_dapp.html)

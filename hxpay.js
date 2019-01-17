@@ -72,8 +72,8 @@ HxPay.prototype = {
 		data = data || {};
 		return new Promise(function (resolve, reject) {
 			var ended = false;
-			if(typeof(HxExtWallet) === 'undefined') {
-				if(ended) {
+			if (typeof (HxExtWallet) === 'undefined') {
+				if (ended) {
 					return;
 				}
 				ended = true;
@@ -113,10 +113,10 @@ HxPay.prototype = {
 	getUserAddress: function () {
 		return this.postMessageRequest('getUserAddress', {}, 'getUserAddress', 5000);
 	},
-	getChainConfigObject: function() {
+	getChainConfigObject: function () {
 		return hx_js.ChainConfig;
 	},
-	getApis: function() {
+	getApis: function () {
 		return hx_js.Apis;
 	},
 	getAssets: function (apisInstance) {
@@ -163,16 +163,12 @@ HxPay.prototype = {
 		return apisInstance
 			.init_promise.then(function () {
 				return apisInstance
-					.init_promise.then(function () {
-						return apisInstance
-							.db_api()
-							.exec("get_transaction_by_id", [txid]);
-					});
+					.db_api()
+					.exec("get_transaction_by_id", [txid]);
 			});
 	},
-	waitTransaction: function (apisInstance, txid, timeout) {
+	waitTransaction: function (nodeClient, txid, timeout) {
 		timeout = timeout || 8000;
-		var hxPay = this;
 		return new Promise(function (resolve, reject) {
 			var executedTimeout = 0;
 			var lastError = "transaction timeout, maybe transaction not successfully";
@@ -183,12 +179,12 @@ HxPay.prototype = {
 					return;
 				}
 				executedTimeout += 2000;
-				hxPay.getTransaction(apisInstance, txid)
+				nodeClient.getTransactionById(txid)
 					.then(function (tx) {
 						clearInterval(intervalHandler);
 						resolve(tx);
 					}).catch(function (err) {
-						
+
 					});
 			};
 			var intervalHandler = setInterval(intervalFunc, 2000);
