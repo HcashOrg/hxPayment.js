@@ -1,0 +1,19 @@
+{
+  "event": [
+    "AddedTodo"
+  ],
+  "api": [
+    "addTodo",
+    "init",
+    "listTodosOfUser"
+  ],
+  "offline_api": [
+    "listTodosOfUser"
+  ],
+  "storage_properties_types": [[
+      "items",
+      54
+    ]
+  ],
+  "api_args_types": []
+}

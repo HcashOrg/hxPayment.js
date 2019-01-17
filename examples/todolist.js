@@ -16,18 +16,21 @@ const {
 const app = new Vue({
     el: '#app',
     data: {
-        contractAddress: 'HXCaPs4VynvySuVAQFEG6jvWML9DggEG3Srm',
+        contractAddress: 'HXCHgvdgYb79MnTLw2CwfEL9h7qSU1J2nNMq',
         myAddress: null,
         myPubKey: null,
         contractHxBalance: 0,
-        myBonus: 0,
-        hxConfig: null,
+
         apisInstance: null,
         nodeClient: null,
 
         lastSerialNumber: null,
         lastResponse: null,
         lastTxid: null,
+
+        queryForm: {},
+        createForm: {},
+        myTodoList: [],
     },
     mounted() {
         hxPay.getConfig()
@@ -50,7 +53,9 @@ const app = new Vue({
                         console.log('pubKey', pubKey);
                         console.log('pubKeyStr', pubKeyString);
                         this.myAddress = address;
+                        this.queryForm.address = address;
                         this.myPubKey = pubKey;
+                        this.loadInfo();
                     }, (err) => {
                         this.showError(err);
                     });
@@ -79,19 +84,29 @@ const app = new Vue({
                     .then((tx) => {
                         console.log("found tx", tx);
                         alert("transaction successfully");
+                        this.loadInfo();
                     }, this.showError);
             } else {
                 this.lastResponse = resp;
             }
         },
-        receiveFromRedPacket() {
+        createTodoItem() {
+            const content = this.createForm.content || '';
+            if (content.length < 1) {
+                this.showError("content can't be empty");
+                return;
+            }
+            if (content.length > 400) {
+                this.showError("too long content");
+                return;
+            }
             this.nodeClient.afterInited()
                 .then(() => {
                     var assetId = "1.3.0";
                     var to = this.contractAddress;
                     var value = 0;
-                    var callFunction = "getBonus"
-                    var callArgs = "_";
+                    var callFunction = "addTodo"
+                    var callArgs = content;
                     hxPay.simulateCall(assetId, to, value, callFunction, callArgs, {
                         gasPrice: '0.00001',
                         gasLimit: 5000,
@@ -131,11 +146,11 @@ const app = new Vue({
                         this.nodeClient.invokeContractOffline(
                             this.myPubKey,
                             this.contractAddress,
-                            'checkBonus',
+                            'listTodosOfUser',
                             this.myAddress
                         ).then(result => {
-                            console.log("checkBonus result: ", result);
-                            this.myBonus = parseInt(result);
+                            console.log("listTodosOfUser result: ", result);
+                            this.myTodoList = JSON.parse(result);
                         }).catch(this.showError);
                     }
                 }).catch(this.showError);
