@@ -45,8 +45,7 @@ function M:addTodo(arg: string)
 end
 
 offline function M:listTodosOfUser(userAddr: string)
-    let from = get_from_address()
-    let userItemsJsonStr = tostring(self.storage.items[from] or '[]')
+    let userItemsJsonStr = tostring(self.storage.items[userAddr] or '[]')
     return userItemsJsonStr
 end
 

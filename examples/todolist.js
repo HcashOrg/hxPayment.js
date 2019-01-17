@@ -16,7 +16,7 @@ const {
 const app = new Vue({
     el: '#app',
     data: {
-        contractAddress: 'HXCHgvdgYb79MnTLw2CwfEL9h7qSU1J2nNMq',
+        contractAddress: 'HXCQjjhJNDjz8gTtqvAWneocsEP3teAbmsvw',
         myAddress: null,
         myPubKey: null,
         contractHxBalance: 0,
@@ -37,7 +37,7 @@ const app = new Vue({
             .then((config) => {
                 console.log('config', config);
                 if (!config) {
-                    alert("please install hx extension wallet first");
+                    this.showError("please install hx extension wallet first");
                     return;
                 }
 
@@ -130,17 +130,17 @@ const app = new Vue({
                                 }
                             }
                         }).catch(this.showError);
-                    if (this.myPubKey) {
-                        this.nodeClient.invokeContractOffline(
-                            this.myPubKey,
-                            this.contractAddress,
-                            'listTodosOfUser',
-                            this.queryForm.address || this.myAddress
-                        ).then(result => {
-                            console.log("listTodosOfUser result: ", result);
-                            this.myTodoList = JSON.parse(result);
-                        }).catch(this.showError);
-                    }
+                    const dummyPubKey = 'HX8mT7XvtTARjdZQ9bqHRoJRMf7P7azFqTQACckaVenM2GmJyxLh';
+                    this.nodeClient.invokeContractOffline(
+                        this.myPubKey || dummyPubKey,
+                        this.contractAddress,
+                        'listTodosOfUser',
+                        this.queryForm.address || this.myAddress
+                    ).then(result => {
+                        console.log("listTodosOfUser result: ", result);
+                        this.myTodoList = JSON.parse(result);
+                    }).catch(this.showError);
+
                 }).catch(this.showError);
         },
         showError(err) {
