@@ -114,20 +114,8 @@ const app = new Vue({
                     });
                 }).catch(this.showError);
         },
-        testGetState() {
-            this.nodeClient.afterInited()
-                .then(() => {
-                    var assetId = "1.3.0";
-                    var to = this.contractAddress;
-                    var value = 0;
-                    var callFunction = "getState"
-                    var callArgs = "_";
-                    hxPay.simulateCall(assetId, to, value, callFunction, callArgs, {
-                        gasPrice: '0.00001',
-                        gasLimit: 5000,
-                        listener: this.hxPayListener.bind(this)
-                    });
-                }).catch(this.showError);
+        queryTodos() {
+            this.loadInfo();
         },
         loadInfo() {
             this.nodeClient.afterInited()
@@ -147,7 +135,7 @@ const app = new Vue({
                             this.myPubKey,
                             this.contractAddress,
                             'listTodosOfUser',
-                            this.myAddress
+                            this.queryForm.address || this.myAddress
                         ).then(result => {
                             console.log("listTodosOfUser result: ", result);
                             this.myTodoList = JSON.parse(result);
