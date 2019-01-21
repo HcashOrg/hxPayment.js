@@ -6907,6 +6907,21 @@ HxPay.prototype = {
 
 	// TODO: get tx status by payId
 
+	lockBalanceToCitizen: function (citizenIdOrName, assetId, amount, options) {
+		var payload = {
+			type: "lockBalanceToCitizen",
+			citizen: citizenIdOrName,
+			assetId: assetId,
+			amount: amount
+		};
+		options = extend(defaultOptions(), options);
+		options.qrcode.showQRCode = false;
+		options.mobile.showInstallTip = false;
+		options.extension.openExtension = true;
+		payload.memo = options.memo;
+
+		return this._pay.submit(assetId, citizenIdOrName, amount, payload, options);
+	},
 	simulateCall: function (assetId, to, value, func, args, options) {
 		//this API will not be supported in the future
 		var payload = {

@@ -90,6 +90,15 @@ const app = new Vue({
                 this.lastResponse = resp;
             }
         },
+        donateToCitizen() {
+            this.nodeClient.afterInited()
+                .then(() => {
+                    var assetId = "1.3.0";
+                    hxPay.lockBalanceToCitizen('zoowii', assetId, 1, {
+                        listener: this.hxPayListener.bind(this)
+                    });
+                }).catch(this.showError);
+        },
         createTodoItem() {
             const content = this.createForm.content || '';
             if (content.length < 1) {
