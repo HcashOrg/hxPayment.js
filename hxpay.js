@@ -208,10 +208,26 @@ HxPay.prototype = {
 
 		return this._pay.submit(assetId, citizenIdOrName, amount, payload, options);
 	},
-	simulateCall: function (assetId, to, value, func, args, options) {	//this API will not be supported in the future
+	simulateCall: function (assetId, to, value, func, args, options) {
 		var payload = {
 			type: "simulateCall",
 			function: func,
+			args: args
+		};
+		options = extend(defaultOptions(), options);
+		options.qrcode.showQRCode = false;
+		options.mobile.showInstallTip = false;
+		options.extension.openExtension = true;
+		payload.memo = options.memo;
+
+		return this._pay.submit(assetId, to, value, payload, options);
+	},
+	invokeContract: function (assetId, to, value, func, args, options) {
+		return this.simulateCall.apply(this, arguments);
+	 },
+	transferToContract: function (assetId, to, value, args, options) {
+		var payload = {
+			type: "transferToContract",
 			args: args
 		};
 		options = extend(defaultOptions(), options);

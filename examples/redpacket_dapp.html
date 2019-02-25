@@ -81,12 +81,13 @@
         <el-row>
             <el-col :span="12">
                 <div class="grid-content">
-                    <el-button @click="receiveFromRedPacket" type="primary" round>Receive</el-button>
+                    <el-button @click="receiveFromRedPacket" type="primary" size="small" round>Receive</el-button>
+                    <el-button @click="depositToRedPacket" type="primary" size="small" round>Deposit</el-button>
                 </div>
             </el-col>
             <el-col :span="12">
                 <div class="grid-content">
-                    <el-button @click="testGetState" type="info" round>GetState</el-button>
+                    <el-button @click="testGetState" type="info" size="small" round>GetState</el-button>
                 </div>
             </el-col>
         </el-row>
