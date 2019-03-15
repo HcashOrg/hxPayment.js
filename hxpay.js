@@ -241,8 +241,12 @@ HxPay.prototype = {
 	queryPayInfo: function (serialNumber, options) {
 		options = extend(defaultOptions(), options);
 		var url = options.callback || config.payUrl(options.debug);
-		url = url + "/query?payId=" + serialNumber;
-		return http.get(url);
+		return http.post(url, JSON.stringify({
+			jsonrpc: '2.0',
+			id: 1,
+			method: 'QueryPayId',
+			params: [serialNumber]
+		}));
 	}
 };
 

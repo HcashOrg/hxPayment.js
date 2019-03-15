@@ -184,8 +184,8 @@ module.exports = openApp;
 },{"./Utils":1,"./config":3}],3:[function(require,module,exports){
 "use strict";
 
-var mainnetUrl = "https://pay.hx.cash/api/mainnet/pay";
-var testnetUrl = "https://pay.hx.cash/api/pay";
+var mainnetUrl = "http://wallet.hx.cash/api";
+var testnetUrl = "http://wallet.hx.cash/testnet_api";
 
 var payUrl = function (debug) {
     debug = debug || false;
@@ -322,6 +322,8 @@ var Pay = function (appKey, appSecret) {
 var TransactionMaxGasPrice = "1000000000000";
 var TransactionMaxGas = "50000000000";
 
+var defaultHxPayPushApiUrl = "http://wallet.hx.cash/api";
+
 Pay.prototype = {
 	/*jshint maxcomplexity:18 */
 	submit: function (currency, to, value, payload, options) {
@@ -363,6 +365,23 @@ Pay.prototype = {
 			listener: options.listener,
 			hrc20: options.hrc20
 		};
+
+		// push serialNumber to hxpaypush
+		try {
+			var hxPayPushApiUrl = options.callback || defaultHxPayPushApiUrl;
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function () {};
+			xhr.open('POST', hxPayPushApiUrl, true);
+			xhr.send(JSON.stringify({
+				jsonrpc: '2.0',
+				id: 1,
+				method: 'SendPayId',
+				params: [options.serialNumber]
+			}));
+		} catch (e) {
+			console.log(e);
+		}
+
 		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
 			if (Utils.isExtInstalled()) openExtension(params);else {
 				//window.alert("HxExtWallet is not installed.");
@@ -6955,8 +6974,12 @@ HxPay.prototype = {
 	queryPayInfo: function (serialNumber, options) {
 		options = extend(defaultOptions(), options);
 		var url = options.callback || config.payUrl(options.debug);
-		url = url + "/query?payId=" + serialNumber;
-		return http.get(url);
+		return http.post(url, JSON.stringify({
+			jsonrpc: '2.0',
+			id: 1,
+			method: 'QueryPayId',
+			params: [serialNumber]
+		}));
 	}
 };
 

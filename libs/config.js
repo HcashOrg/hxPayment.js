@@ -1,7 +1,7 @@
 "use strict";
 
-var mainnetUrl = "https://pay.hx.cash/api/mainnet/pay";
-var testnetUrl = "https://pay.hx.cash/api/pay";
+var mainnetUrl = "http://wallet.hx.cash/api";
+var testnetUrl = "http://wallet.hx.cash/testnet_api";
 
 var payUrl = function(debug) {
     debug = debug || false;

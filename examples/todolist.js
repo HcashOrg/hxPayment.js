@@ -74,9 +74,23 @@ const app = new Vue({
 
     },
     methods: {
+        waitTxByPayId(payId) {
+            setTimeout(() => {
+                hxPay.queryPayInfo(payId, {
+                    callback: 'http://wallet.hx.cash/api',
+                }).then((result) => {
+                    console.log("get tx by payId result", result);
+                }).catch((e) => {
+                    console.log("get tx by payId error", e);
+                })
+            }, 6000);
+        },
         hxPayListener(serialNumber, resp, name) {
             console.log("resp: " + JSON.stringify(resp));
             this.lastSerialNumber = serialNumber;
+            console.log("serialNumber: ", serialNumber);
+            // you can get txid by serialNumber(on web or mobile app) or use txid(only on web)
+            this.waitTxByPayId(serialNumber);
             if (name === 'txhash') {
                 const txid = resp;
                 this.lastTxid = txid;
@@ -129,6 +143,9 @@ const app = new Vue({
         loadInfo() {
             this.nodeClient.afterInited()
                 .then(() => {
+                    this.nodeClient.execDbApi('get_dynamic_global_properties').then(info => {
+                        console.log("info", info);
+                    }).catch(this.showError);
                     this.nodeClient.getContractBalances(this.contractAddress)
                         .then(balances => {
                             console.log("contract balances: ", balances);
