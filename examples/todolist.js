@@ -113,6 +113,24 @@ const app = new Vue({
                     });
                 }).catch(this.showError);
         },
+        signTodoItem() {
+            const content = this.createForm.content || '';
+            if (content.length < 1) {
+                this.showError("content can't be empty");
+                return;
+            }
+            if (content.length > 400) {
+                this.showError("too long content");
+                return;
+            }
+            // const contentHex = TransactionHelper.bytes_to_hex(content);
+            this.nodeClient.afterInited()
+                .then(() => {
+                    hxPay.signBufferText(content, {
+                        listener: this.hxPayListener.bind(this)
+                    });
+                }).catch(this.showError);
+        },
         createTodoItem() {
             const content = this.createForm.content || '';
             if (content.length < 1) {

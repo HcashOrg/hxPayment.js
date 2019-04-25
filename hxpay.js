@@ -61,6 +61,14 @@ HxPay.prototype = {
 		options = extend(defaultOptions(), options);
 		return this._pay.submit(assetId, to, value, payload, options);
 	},
+	signBufferHex: function (bufferHex, options) {
+		options = extend(defaultOptions(), options);
+		return this._pay.requestSign(bufferHex, options);
+	},
+	signBufferText: function (text, options) {
+		options = extend(defaultOptions(), options);
+		return this._pay.requestSignText(text, options);
+	},
 
 	defaultConfig: {
 		chainId: '2e13ba07b457f2e284dcfcbd3d4a3e4d78a6ed89a61006cdb7fdad6d67ef0b12',
