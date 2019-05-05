@@ -71,7 +71,6 @@ const app = new Vue({
                         console.log('pubKeyStr', pubKeyString);
                         this.myAddress = address;
                         this.myPubKey = pubKey;
-                        this.loadInfo();
                     }, (err) => {
                         this.showError(err);
                     });
