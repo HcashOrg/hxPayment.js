@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8">
+    <title>HX Dex Dapp Demo</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="../hxjs.min.js?v=1.0.2"></script>
+    <script type="text/javascript" src="../dist/hxPay.min.js?v=1.0.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        .row {
+            margin: 0 auto;
+            width: 80%;
+            padding: 15px;
+            text-align: center;
+        }
+
+        #app {
+            max-width: 800px;
+            margin: 20px auto 20px auto;
+        }
+
+        #app .el-row {
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" class="container">
+        <h1 class="row">HX Dex Dapp demo</h1>
+        <div>
+            <h4>BTC/HX</h4>
+            <el-row>
+                <el-col :span="12">
+                    <div class="grid-content">
+                        <div style="margin-top: 15px;">
+                            <el-input placeholder="Price" v-model="addOrderForm.price">
+                                <template slot="append">BTC/HX</template>
+                            </el-input>
+                            <el-input placeholder="Amount" v-model="addOrderForm.amount"></el-input>
+                        </div>
+                        <el-button @click="addBuyOrder">Buy</el-button>
+                        <el-button @click="addSellOrder">Sell</el-button>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div>
+                        <h4>Order Book</h4>
+                    </div>
+                    <div class="grid-content">
+                        <div>
+                            <div class="-ask-panel-item" v-for="order in orderBook.asks">{{order.priceString}}  <span>{{order.payNum / addOrderForm.tradeAssetPricision}}</span></div>
+                        </div>
+                        <div>-----------------------------------</div>
+                        <div>
+                            <div class="-bid-panel-item" v-for="order in orderBook.bids">{{order.priceString}}  <span>{{order.purchaseNum / addOrderForm.tradeAssetPricision}}</span></div>
+                        </div>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
+    </div>
+    <script src="./dex.js?v=20190426"></script>
+</body>
+
+</html>
