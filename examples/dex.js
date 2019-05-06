@@ -53,7 +53,7 @@ const app = new Vue({
         myActiveOrders: [],
 
         dexEngineEndpoint: "http://127.0.0.1:40000/api",
-        dexContractAddress: "HXTCc1n9C1JujEkXJ4X3W5MpWRuwSMSwmFkBM",
+        dexContractAddress: "HXTCMA8uQe1rehFHq8hKJAu8RASYZeGvdtTLH",
     },
     mounted() {
         this.getDexInfo();
@@ -73,6 +73,8 @@ const app = new Vue({
 
                 hxPay.getUserAddress()
                     .then(({ address, pubKey, pubKeyString }) => {
+                        // TODO: 当是测试链时address要从HXN开头改成HXTN开头
+                        address = 'HXTN' + address.substr(3); // FIXME
                         console.log('address', address);
                         console.log('pubKey', pubKey);
                         console.log('pubKeyStr', pubKeyString);
@@ -249,6 +251,7 @@ const app = new Vue({
                         ).then(result => {
                             console.log("balance result: ", result);
                             this.currentUserBalancesInDex[assetSymbol] = result;
+                            this.$forceUpdate();
                         }).catch((err)=>{
                             console.log("error", err);
                         });
@@ -264,6 +267,7 @@ const app = new Vue({
             }).then(price => {
                 console.log("latest price", price);
                 this.latestMarketPrices[this.addOrderForm.marketPair] = price;
+                this.$forceUpdate();
             }).catch(this.showError.bind(this));
         },
         getDexInfo() {
@@ -286,6 +290,7 @@ const app = new Vue({
             const price = form.price;
             const priceNum = parseFloat(price);
             const tradeAssetPricision = form.tradeAssetPricision;
+            const baseAssetPrecision = form.baseAssetPrecision;
             const amount = parseFloat(form.amount);
             if (!amount || amount <= 0) {
                 this.showError("invalid amount")
@@ -296,7 +301,7 @@ const app = new Vue({
                 return;
             }
             const fullAmount = parseInt(amount * tradeAssetPricision);
-            const fullBaseAmount = parseInt(priceNum * fullAmount);
+            const fullBaseAmount = parseInt(priceNum * amount * baseAssetPrecision);
             // make order string
             const orderNonce = new Date().getTime().toString();
             const orderInfo = {

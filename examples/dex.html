@@ -65,11 +65,11 @@
                     </div>
                     <div class="grid-content">
                         <div>
-                            <div class="-ask-panel-item" v-for="order in orderBook.asks">{{order.priceString}}  <span>{{order.payNum / addOrderForm.tradeAssetPricision}}</span></div>
+                            <div class="-ask-panel-item" v-for="order in orderBook.asks">{{parseFloat(order.priceString) * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }}  <span>{{order.payNum / addOrderForm.baseAssetPrecision}}</span></div>
                         </div>
                         <div>-----------------------------------</div>
                         <div>
-                            <div class="-bid-panel-item" v-for="order in orderBook.bids">{{order.priceString}}  <span>{{order.purchaseNum / addOrderForm.tradeAssetPricision}}</span></div>
+                            <div class="-bid-panel-item" v-for="order in orderBook.bids">{{parseFloat(order.priceString) * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }}  <span>{{order.purchaseNum / addOrderForm.baseAssetPrecision}}</span></div>
                         </div>
                     </div>
                 </el-col>
