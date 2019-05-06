@@ -38,18 +38,25 @@ const app = new Vue({
         addOrderForm: {
             tradeAsset: 'BTC',
             baseAsset: 'HX',
+            marketPair: 'BTC/HX',
             price: 4000,
             amount: null,
-            tradeAssetPricision: 100000000
+            tradeAssetPricision: 100000000,
+            baseAssetPrecision: 100000,
         },
-        orderBook : {
+        orderBook: {
             asks: [],
             bids: [],
         },
+        currentUserBalancesInDex: {},
+        latestMarketPrices: {},
+        myActiveOrders: [],
 
         dexEngineEndpoint: "http://127.0.0.1:40000/api",
+        dexContractAddress: "HXTCc1n9C1JujEkXJ4X3W5MpWRuwSMSwmFkBM",
     },
     mounted() {
+        this.getDexInfo();
         hxPay.getConfig()
             .then((config) => {
                 console.log('config', config);
@@ -71,6 +78,9 @@ const app = new Vue({
                         console.log('pubKeyStr', pubKeyString);
                         this.myAddress = address;
                         this.myPubKey = pubKey;
+                        this.updateUserBalancesInDex();
+                        this.updateUserActiveOrders();
+                        this.updateLatestPrice();
                     }, (err) => {
                         this.showError(err);
                     });
@@ -95,6 +105,7 @@ const app = new Vue({
                     callback: 'http://wallet.hx.cash/api',
                 }).then((result) => {
                     console.log("get tx by payId result", result);
+                    this.updateUserBalancesInDex();
                 }).catch((e) => {
                     console.log("get tx by payId error", e);
                 })
@@ -111,9 +122,9 @@ const app = new Vue({
                 const sigHex = resp;
                 console.log("got sig", sigHex);
                 const lastSigOrderKey = lastSigOrderNonce;
-                if(lastSigOrderKey) {
+                if (lastSigOrderKey) {
                     const callback = orderSigCallbacks[lastSigOrderKey];
-                    if(callback) {
+                    if (callback) {
                         callback(sigHex);
                     }
                 }
@@ -188,7 +199,7 @@ const app = new Vue({
         },
         updateDexStatus() {
             this.requestDexRpc("GetStatus", {})
-                .then((status)=> {
+                .then((status) => {
                     console.log("status", status)
                 }).catch(this.showError);
         },
@@ -212,8 +223,63 @@ const app = new Vue({
                 this.orderBook.bids = bids.items;
             }).catch(this.showError.bind(this));
         },
-        // TODO: 展示用户当前挂单，成交历史，最新价格
-        // TODO: 合约充值提现，查询在合约内余额
+        updateUserActiveOrders() {
+            this.requestDexRpc("QueryUserActiveOrders", {
+                userAddr: this.myAddress,
+                limit: 10,
+            }).then(orders => {
+                console.log("user active orders", orders);
+                this.myActiveOrders = orders;
+            }).catch(this.showError.bind(this));
+        },
+        updateUserBalancesInDex() {
+            if (!this.myAddress) {
+                return;
+            }
+            const assets = [this.addOrderForm.tradeAsset, this.addOrderForm.baseAsset];
+            for (const assetSymbol of assets) {
+                this.nodeClient.afterInited()
+                    .then(() => {
+                        const dummyPubKey = 'HX8mT7XvtTARjdZQ9bqHRoJRMf7P7azFqTQACckaVenM2GmJyxLh';
+                        this.nodeClient.invokeContractOffline(
+                            this.myPubKey || dummyPubKey,
+                            this.dexContractAddress,
+                            'balanceOf',
+                            this.myAddress + "," + assetSymbol
+                        ).then(result => {
+                            console.log("balance result: ", result);
+                            this.currentUserBalancesInDex[assetSymbol] = result;
+                        }).catch((err)=>{
+                            console.log("error", err);
+                        });
+                    }).catch(this.showError);
+            }
+        },
+        // TODO: websocket监听价格变化和order变化
+
+        updateLatestPrice() {
+            this.requestDexRpc("QueryMarketLatestPrice", {
+                tradeAssetSymbol: this.addOrderForm.tradeAsset,
+                baseAssetSymbol: this.addOrderForm.baseAsset,
+            }).then(price => {
+                console.log("latest price", price);
+                this.latestMarketPrices[this.addOrderForm.marketPair] = price;
+            }).catch(this.showError.bind(this));
+        },
+        getDexInfo() {
+            this.requestDexRpc("QueryDexInfo", {
+            }).then(info => {
+                console.log("dex info", info);
+                this.dexInfo = info;
+                this.dexContractAddress = info.dexContractAddress;
+            }).catch(this.showError.bind(this));
+        },
+        // TODO: 展示用户成交历史
+        depositToContract() {
+            hxPay.transferToContract('1.3.0', this.dexContractAddress, 10, [], {
+                listener: this.hxPayListener.bind(this)
+            });
+        },
         addOrder(form, isBuy) {
             const tradeAsset = form.tradeAsset;
             const baseAsset = form.baseAsset;
@@ -257,8 +323,10 @@ const app = new Vue({
                     sigHex: '0x' + sig
                 }).then((orderId) => {
                     console.log("order " + orderId + " submited to dex engine");
-                    // TODO: update order book and current user order history
+                    // update order book and current user order history
                     this.updateOrderbook();
+                    this.updateUserActiveOrders();
+                    this.updateLatestPrice();
                 }).catch(this.showError.bind(this));
             });
         },
