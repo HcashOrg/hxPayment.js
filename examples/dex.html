@@ -40,9 +40,19 @@
                     <div class="grid-content">
                         <div>
                             <h4>Balances in dex</h4>
-                            <span>{{(currentUserBalancesInDex[addOrderForm.tradeAsset] || 0) / addOrderForm.tradeAssetPricision}} {{addOrderForm.tradeAsset}}</span>
+                            <span>{{(currentUserBalancesInDex[addOrderForm.tradeAsset] || 0) /
+                                addOrderForm.tradeAssetPricision}} {{addOrderForm.tradeAsset}}</span>
                             <br>
-                            <span>{{(currentUserBalancesInDex[addOrderForm.baseAsset] || 0) / addOrderForm.baseAssetPrecision}} {{addOrderForm.baseAsset}}</span>
+                            <span>{{(currentUserBalancesInDex[addOrderForm.baseAsset] || 0) /
+                                addOrderForm.baseAssetPrecision}} {{addOrderForm.baseAsset}}</span>
+                        </div>
+                        <div>
+                            <h4>Locked Balances in dex</h4>
+                            <span>{{(currentUserLockedBalancesInDex[addOrderForm.tradeAsset] || 0) /
+                                addOrderForm.tradeAssetPricision}} {{addOrderForm.tradeAsset}}</span>
+                            <br>
+                            <span>{{(currentUserLockedBalancesInDex[addOrderForm.baseAsset] || 0) /
+                                addOrderForm.baseAssetPrecision}} {{addOrderForm.baseAsset}}</span>
                         </div>
                         <div style="margin-top: 15px;">
                             <el-input placeholder="Price" v-model="addOrderForm.price">
@@ -54,22 +64,28 @@
                         <el-button @click="addSellOrder">Sell</el-button>
 
                         <div style="margin-top: 20px;">
-                                <el-button @click="depositToContract">Deposit</el-button>
+                            <el-button @click="depositToContract">Deposit</el-button>
                         </div>
                     </div>
                 </el-col>
                 <el-col :span="12">
-                    <div>Price: <span>{{(latestMarketPrices[addOrderForm.marketPair] || 0) * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision}}</span> <span>{{addOrderForm.baseAsset}} / {{addOrderForm.tradeAsset}}</span></div>
+                    <div>Price: <span>{{(latestMarketPrices[addOrderForm.marketPair] || 0) *
+                            addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision}}</span> <span>{{addOrderForm.baseAsset}}
+                            / {{addOrderForm.tradeAsset}}</span></div>
                     <div>
                         <h4>Order Book</h4>
                     </div>
                     <div class="grid-content">
                         <div>
-                            <div class="-ask-panel-item" v-for="order in orderBook.asks">{{parseFloat(order.priceString) * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }}  <span>{{order.payNum / addOrderForm.baseAssetPrecision}}</span></div>
+                            <div class="-ask-panel-item" v-for="order in orderBook.asks">{{parseFloat(order.priceString)
+                                * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }} <span>{{order.payNum
+                                    / addOrderForm.baseAssetPrecision}}</span></div>
                         </div>
                         <div>-----------------------------------</div>
                         <div>
-                            <div class="-bid-panel-item" v-for="order in orderBook.bids">{{parseFloat(order.priceString) * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }}  <span>{{order.purchaseNum / addOrderForm.baseAssetPrecision}}</span></div>
+                            <div class="-bid-panel-item" v-for="order in orderBook.bids">{{parseFloat(order.priceString)
+                                * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }} <span>{{order.purchaseNum
+                                    / addOrderForm.baseAssetPrecision}}</span></div>
                         </div>
                     </div>
                 </el-col>

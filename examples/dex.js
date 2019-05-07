@@ -49,6 +49,7 @@ const app = new Vue({
             bids: [],
         },
         currentUserBalancesInDex: {},
+        currentUserLockedBalancesInDex: {},
         latestMarketPrices: {},
         myActiveOrders: [],
 
@@ -238,25 +239,41 @@ const app = new Vue({
             if (!this.myAddress) {
                 return;
             }
-            const assets = [this.addOrderForm.tradeAsset, this.addOrderForm.baseAsset];
-            for (const assetSymbol of assets) {
-                this.nodeClient.afterInited()
-                    .then(() => {
-                        const dummyPubKey = 'HX8mT7XvtTARjdZQ9bqHRoJRMf7P7azFqTQACckaVenM2GmJyxLh';
-                        this.nodeClient.invokeContractOffline(
-                            this.myPubKey || dummyPubKey,
-                            this.dexContractAddress,
-                            'balanceOf',
-                            this.myAddress + "," + assetSymbol
-                        ).then(result => {
-                            console.log("balance result: ", result);
-                            this.currentUserBalancesInDex[assetSymbol] = result;
-                            this.$forceUpdate();
-                        }).catch((err)=>{
-                            console.log("error", err);
-                        });
-                    }).catch(this.showError);
-            }
+            // query user balances by dex rpc
+            this.requestDexRpc("QueryUserBalancesInDex", {
+                userAddr: this.myAddress,
+            }).then(balances => {
+                console.log("user balances", balances);
+                const userBalances = balances.userBalances || {};
+                const userNotLockedBalances = balances.userNotLockedBalances || {};
+                for(const assetSymbol in userBalances) {
+                    this.currentUserBalancesInDex[assetSymbol] = userBalances[assetSymbol];
+                }
+                for(const assetSymbol in userNotLockedBalances) {
+                    this.currentUserLockedBalancesInDex[assetSymbol] = (this.currentUserBalancesInDex[assetSymbol] || 0) - userNotLockedBalances[assetSymbol];
+                }
+                this.$forceUpdate();
+            }).catch(this.showError.bind(this));
+
+            // const assets = [this.addOrderForm.tradeAsset, this.addOrderForm.baseAsset];
+            // for (const assetSymbol of assets) {
+            //     this.nodeClient.afterInited()
+            //         .then(() => {
+            //             const dummyPubKey = 'HX8mT7XvtTARjdZQ9bqHRoJRMf7P7azFqTQACckaVenM2GmJyxLh';
+            //             this.nodeClient.invokeContractOffline(
+            //                 this.myPubKey || dummyPubKey,
+            //                 this.dexContractAddress,
+            //                 'balanceOf',
+            //                 this.myAddress + "," + assetSymbol
+            //             ).then(result => {
+            //                 console.log("balance result: ", result);
+            //                 this.currentUserBalancesInDex[assetSymbol] = result;
+            //                 this.$forceUpdate();
+            //             }).catch((err)=>{
+            //                 console.log("error", err);
+            //             });
+            //         }).catch(this.showError);
+            // }
         },
         // TODO: websocket监听价格变化和order变化
 
