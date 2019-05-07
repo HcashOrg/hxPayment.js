@@ -349,6 +349,7 @@ const app = new Vue({
                     this.updateOrderbook();
                     this.updateUserActiveOrders();
                     this.updateLatestPrice();
+                    this.updateUserBalancesInDex();
                 }).catch(this.showError.bind(this));
             });
         },
