@@ -393,7 +393,78 @@ var TransactionMaxGas = "50000000000";
 
 var defaultHxPayPushApiUrl = "http://wallet.hx.cash/api";
 
+function submitPayId(options) {
+	// push serialNumber to hxpaypush
+	try {
+		var hxPayPushApiUrl = options.callback || defaultHxPayPushApiUrl;
+		var xhr = new XMLHttpRequest();
+		xhr.onreadystatechange = function () {};
+		xhr.open('POST', hxPayPushApiUrl, true);
+		xhr.send(JSON.stringify({
+			jsonrpc: '2.0',
+			id: 1,
+			method: 'SendPayId',
+			params: [options.serialNumber]
+		}));
+	} catch (e) {
+		console.log(e);
+	}
+}
+
 Pay.prototype = {
+	submitParamsToWallet: function (params, des, options) {
+		submitPayId(options);
+
+		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
+			if (Utils.isExtInstalled()) openExtension(params);else {
+				//window.alert("HxExtWallet is not installed.");
+				if (window.confirm('HxExtWallet is not installed. Click "ok" to install it.')) {
+					var installUrl = "https://chrome.google.com/webstore/detail/hxextwallet/eboifcnkiocbamnhekeoembpmmcnebii";
+					window.open(installUrl);
+				}
+			}
+		}
+
+		var appParams = {
+			category: "jump",
+			des: des || "confirmTransfer",
+			pageParams: params
+		};
+
+		if (Utils.isMobile()) {
+			openApp(appParams, options);
+		}
+
+		if (options.qrcode.showQRCode && !Utils.isNano()) {
+			QRCode.showQRCode(JSON.stringify(appParams), options);
+		}
+
+		return options.serialNumber;
+	},
+	requestSignText: function (text, options) {
+		options.serialNumber = Utils.randomCode(32);
+		var params = {
+			serialNumber: options.serialNumber,
+			goods: options.goods,
+			signBufferText: text,
+			callback: options.callback || config.payUrl(options.debug),
+			listener: options.listener,
+			isSignBufferText: true
+		};
+		return this.submitParamsToWallet(params, "confirmSignText", options);
+	},
+	requestSign: function (bufferHex, options) {
+		options.serialNumber = Utils.randomCode(32);
+		var params = {
+			serialNumber: options.serialNumber,
+			goods: options.goods,
+			signBufferHex: bufferHex,
+			callback: options.callback || config.payUrl(options.debug),
+			listener: options.listener,
+			isSignBufferHex: true
+		};
+		return this.submitParamsToWallet(params, "confirmSignHex", options);
+	},
 	/*jshint maxcomplexity:18 */
 	submit: function (currency, to, value, payload, options) {
 		options.serialNumber = Utils.randomCode(32);
@@ -435,47 +506,7 @@ Pay.prototype = {
 			hrc20: options.hrc20
 		};
 
-		// push serialNumber to hxpaypush
-		try {
-			var hxPayPushApiUrl = options.callback || defaultHxPayPushApiUrl;
-			var xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = function () {};
-			xhr.open('POST', hxPayPushApiUrl, true);
-			xhr.send(JSON.stringify({
-				jsonrpc: '2.0',
-				id: 1,
-				method: 'SendPayId',
-				params: [options.serialNumber]
-			}));
-		} catch (e) {
-			console.log(e);
-		}
-
-		if (Utils.isAnybitMobile()) {
-			openAnyBitDapp(params, options);
-			return;
-		}
-
-		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
-			if (Utils.isExtInstalled()) openExtension(params);else {
-				//window.alert("HxExtWallet is not installed.");
-				if (window.confirm('HxExtWallet is not installed. Click "ok" to install it.')) {
-					window.open('https://chrome.google.com/webstore/detail/hxextwallet/TODO');
-				}
-			}
-		}
-
-		var appParams = {
-			category: "jump",
-			des: "confirmTransfer",
-			pageParams: params
-		};
-
-		if (options.qrcode.showQRCode && !Utils.isNano()) {
-			QRCode.showQRCode(JSON.stringify(appParams), options);
-		}
-
-		return options.serialNumber;
+		return this.submitParamsToWallet(params, "confirmTransfer", options);
 	}
 };
 
@@ -8928,6 +8959,14 @@ HxPay.prototype = {
 		};
 		options = extend(defaultOptions(), options);
 		return this._pay.submit(assetId, to, value, payload, options);
+	},
+	signBufferHex: function (bufferHex, options) {
+		options = extend(defaultOptions(), options);
+		return this._pay.requestSign(bufferHex, options);
+	},
+	signBufferText: function (text, options) {
+		options = extend(defaultOptions(), options);
+		return this._pay.requestSignText(text, options);
 	},
 
 	defaultConfig: {
