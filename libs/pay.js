@@ -7,6 +7,7 @@ var QRCode = require("./qrcode");
 
 var openExtension = require("./extensionHandler");
 var openApp = require("./appHandler");
+var openAnyBitDapp = require("./anybitHandler");
 var config = require("./config");
 
 var Pay = function (appKey, appSecret) {
@@ -42,6 +43,11 @@ function submitPayId(options) {
 Pay.prototype = {
 	submitParamsToWallet: function(params, des, options){
 		submitPayId(options);
+    
+    if (Utils.isAnybitMobile()) {
+			openAnyBitDapp(params, options);
+			return;
+		}
 
 		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
 			if (Utils.isExtInstalled())

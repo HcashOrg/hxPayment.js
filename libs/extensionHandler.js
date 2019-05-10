@@ -20,7 +20,7 @@ var openExtension = function (params) {
 
 window.addEventListener('message', function (resp) {
 
-    console.log("hxpay: received resp.data: " + JSON.stringify(resp.data));
+    //console.log("hxpay: received resp.data: " + JSON.stringify(resp.data));
     if (resp.data.src !== "content")
         return;
 
