@@ -28,7 +28,7 @@ var isAnybitMobile = function() {
         _isAnybit = window.isAnybit;
         return true;
     }
-    
+
     return _isAnybit;
 };
 
@@ -48,8 +48,8 @@ var wrappedAnybitMethod = function (method) {
 };
 
 var getOrigin = function() {
-    let origin;
-    const plugin = "";
+    var origin;
+    var plugin = "";
 
     if(typeof location !== 'undefined') {
         if(location.hasOwnProperty('hostname') && location.hostname.length && location.hostname !== 'localhost') {
