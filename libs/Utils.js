@@ -22,6 +22,46 @@ var isMobile = function() {
     return false;
 };
 
+var _isAnybit = false;
+var isAnybitMobile = function() {
+    if (window.isAnybit === true) {
+        _isAnybit = window.isAnybit;
+        return true;
+    }
+    
+    return _isAnybit;
+};
+
+window.addEventListener('AnybitLoaded', function () {
+	console.log('AnybitLoaded');
+    _isAnybit = true;
+    window.isAnybit = true;
+    //delete callbackMap[key];
+});
+
+var anybitDappNamespace = "AnybitDapp";
+var wrappedAnybitMethod = function (method) {
+    if (method.startsWith(anybitDappNamespace)) {
+        return method;
+    }
+    return anybitDappNamespace + "." + method;
+};
+
+var getOrigin = function() {
+    let origin;
+    const plugin = "";
+
+    if(typeof location !== 'undefined') {
+        if(location.hasOwnProperty('hostname') && location.hostname.length && location.hostname !== 'localhost') {
+            origin = location.hostname;
+        } else { origin = plugin; }
+    } else { origin = plugin; }
+
+    if(origin.substr(0, 4) === 'www.') origin = origin.replace('www.','');
+    
+    return origin;
+};
+
 var isNano = function() {
     var userAgent = navigator.userAgent.toLowerCase();
     if (userAgent.indexOf("nasnanoapp") > -1)  {
@@ -74,5 +114,8 @@ module.exports = {
     isNano: isNano,
     isWechat: isWechat,
     randomCode: randomCode,
-    addCssRule: addCssRule
+    addCssRule: addCssRule,
+    getOrigin: getOrigin,
+    isAnybitMobile: isAnybitMobile,
+    wrappedAnybitMethod: wrappedAnybitMethod,
 };

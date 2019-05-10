@@ -7,6 +7,7 @@ var QRCode = require("./qrcode");
 
 var openExtension = require("./extensionHandler");
 var openApp = require("./appHandler");
+var openAnyBitDapp = require("./anybitHandler");
 var config = require("./config");
 
 var Pay = function (appKey, appSecret) {
@@ -79,6 +80,11 @@ Pay.prototype = {
 			console.log(e);
 		}
 
+		if (Utils.isAnybitMobile()) {
+			openAnyBitDapp(params, options);
+			return;
+		}
+
 		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
 			if (Utils.isExtInstalled())
 				openExtension(params);
@@ -96,9 +102,6 @@ Pay.prototype = {
 			pageParams: params
 		};
 
-		if (Utils.isMobile()) {
-			openApp(appParams, options);
-		}
 
 		if (options.qrcode.showQRCode && !Utils.isNano()) {
 			QRCode.showQRCode(JSON.stringify(appParams), options);

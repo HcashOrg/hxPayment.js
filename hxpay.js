@@ -4,6 +4,7 @@ var extend = require('extend');
 var http = require("./libs/http");
 var config = require("./libs/config");
 var Pay = require("./libs/pay");
+var Utils = require('./libs/Utils');
 
 var BigNumber = require("bignumber.js");
 
@@ -70,6 +71,31 @@ HxPay.prototype = {
 	postMessageRequest: function (method, data, callbackRegisterMethod, timeout) {
 		timeout = timeout || 10000;
 		data = data || {};
+
+		if (Utils.isAnybitMobile()) {
+			var fn = Utils.wrappedAnybitMethod(method);
+			return new Promise(function (resolve, reject) {
+				var ended = false;
+
+				dsBridge.call(fn, data, function(s) {
+					var resp = JSON.parse(s);
+					if (resp.code === 0) {
+						resolve(resp);
+					} else {
+						reject(method + "failed: " + resp.errmsg);
+					}
+				});
+
+				setTimeout(function () {
+					if (ended) {
+						return;
+					}
+					ended = true;
+					reject(method + " timeout");
+				}, timeout);
+			});
+		}
+
 		return new Promise(function (resolve, reject) {
 			var ended = false;
 			if (typeof (HxExtWallet) === 'undefined') {
