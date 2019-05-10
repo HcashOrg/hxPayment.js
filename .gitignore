@@ -25,3 +25,4 @@ packages/
 /logs
 *~
 /*.log
+.cache
