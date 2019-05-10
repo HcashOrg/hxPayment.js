@@ -87,6 +87,7 @@ const app = new Vue({
         },
         hxPayListener(serialNumber, resp, name) {
             console.log("resp: " + JSON.stringify(resp));
+            console.log("name: " + name);
             this.lastSerialNumber = serialNumber;
             console.log("serialNumber: ", serialNumber);
             // you can get txid by serialNumber(on web or mobile app) or use txid(only on web)
@@ -100,6 +101,10 @@ const app = new Vue({
                         alert("transaction successfully");
                         this.loadInfo();
                     }, this.showError);
+            } else if(name ==='sig') {
+                const sigHex = resp;
+                console.log("got sig", sigHex);
+                this.showError("Siganture: " + sigHex);
             } else {
                 this.lastResponse = resp;
             }
@@ -112,6 +117,21 @@ const app = new Vue({
                         listener: this.hxPayListener.bind(this)
                     });
                 }).catch(this.showError);
+        },
+        signTodoItem() {
+            const content = this.createForm.content || '';
+            if (content.length < 1) {
+                this.showError("content can't be empty");
+                return;
+            }
+            if (content.length > 400) {
+                this.showError("too long content");
+                return;
+            }
+            // const contentHex = TransactionHelper.bytes_to_hex(content);
+            hxPay.signBufferText(content, {
+                listener: this.hxPayListener.bind(this)
+            });
         },
         createTodoItem() {
             const content = this.createForm.content || '';
