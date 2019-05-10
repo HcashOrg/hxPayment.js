@@ -1,4 +1,5 @@
 "use strict";
+/* jshint strict: false */
 
 var config = require("./config");
 var Utils = require("./Utils");

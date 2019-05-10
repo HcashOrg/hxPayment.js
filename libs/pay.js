@@ -1,4 +1,5 @@
 "use strict";
+/* jshint strict: false */
 
 var BigNumber = require("bignumber.js");
 
@@ -41,10 +42,11 @@ function submitPayId(options) {
 }
 
 Pay.prototype = {
-	submitParamsToWallet: function(params, des, options){
+	/*jshint maxcomplexity:18 */
+	submitParamsToWallet: function (params, des, options) {
 		submitPayId(options);
-    
-    if (Utils.isAnybitMobile()) {
+
+		if (Utils.isAnybitMobile()) {
 			openAnyBitDapp(params, options);
 			return;
 		}
@@ -77,7 +79,7 @@ Pay.prototype = {
 
 		return options.serialNumber;
 	},
-	requestSignText: function(text, options) {
+	requestSignText: function (text, options) {
 		options.serialNumber = Utils.randomCode(32);
 		var params = {
 			serialNumber: options.serialNumber,
@@ -89,7 +91,7 @@ Pay.prototype = {
 		};
 		return this.submitParamsToWallet(params, "confirmSignText", options);
 	},
-	requestSign: function(bufferHex, options) {
+	requestSign: function (bufferHex, options) {
 		options.serialNumber = Utils.randomCode(32);
 		var params = {
 			serialNumber: options.serialNumber,

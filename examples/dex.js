@@ -74,8 +74,6 @@ const app = new Vue({
 
                 hxPay.getUserAddress()
                     .then(({ address, pubKey, pubKeyString }) => {
-                        // TODO: 当是测试链时address要从HXN开头改成HXTN开头
-                        address = 'HXTN' + address.substr(3); // FIXME
                         console.log('address', address);
                         console.log('pubKey', pubKey);
                         console.log('pubKeyStr', pubKeyString);
