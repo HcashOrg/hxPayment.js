@@ -135,9 +135,9 @@ HxPay.prototype = {
 			}, timeout);
 		});
 	},
-	setConfig: function(chainId, networkKey) {
+	setConfig: function(chainId, networkKey, optionalNodeRpcUrl) {
 		// 通知钱包DAPP使用的网络配置和chainId
-		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey}, 'setConfig', 10000);
+		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey, network: optionalNodeRpcUrl}, 'setConfig', 10000);
 	},
 	onConnectedWallet: function() {
 		// 等待钱包注入的js执行完成
