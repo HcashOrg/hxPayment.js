@@ -173,7 +173,8 @@ const app = new Vue({
             this.updateOrderbook();
             hxPay.onConnectedWallet()
                 .then(() => {
-                    hxPay.setConfig('2c5729a8f02e0431233528a3db625a7b0f83aa7c9f561d9bd73886d993a57161', 'testnet')
+                    const optionalNodeRpcUrl = 'ws://192.168.1.121:30000';
+                    hxPay.setConfig('2c5729a8f02e0431233528a3db625a7b0f83aa7c9f561d9bd73886d993a57161', 'regtest121', optionalNodeRpcUrl)
                         .then(() => {
                             console.log("set config done");
                         });
