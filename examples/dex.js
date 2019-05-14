@@ -171,6 +171,13 @@ const app = new Vue({
                 }).catch(this.showError);
 
             this.updateOrderbook();
+            hxPay.onConnectedWallet()
+                .then(() => {
+                    hxPay.setConfig('2c5729a8f02e0431233528a3db625a7b0f83aa7c9f561d9bd73886d993a57161', 'testnet')
+                        .then(() => {
+                            console.log("set config done");
+                        });
+                });
         },
         showError(err) {
             alert(JSON.stringify(err));
@@ -244,10 +251,10 @@ const app = new Vue({
                 console.log("user balances", balances);
                 const userBalances = balances.userBalances || {};
                 const userNotLockedBalances = balances.userNotLockedBalances || {};
-                for(const assetSymbol in userBalances) {
+                for (const assetSymbol in userBalances) {
                     this.currentUserBalancesInDex[assetSymbol] = userBalances[assetSymbol];
                 }
-                for(const assetSymbol in userNotLockedBalances) {
+                for (const assetSymbol in userNotLockedBalances) {
                     this.currentUserLockedBalancesInDex[assetSymbol] = (this.currentUserBalancesInDex[assetSymbol] || 0) - userNotLockedBalances[assetSymbol];
                 }
                 this.$forceUpdate();

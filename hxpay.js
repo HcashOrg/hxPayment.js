@@ -114,13 +114,18 @@ HxPay.prototype = {
 				reject("HxExtWallet not installed");
 				return;
 			}
+			if(!HxExtWallet[callbackRegisterMethod]) {
+				console.log("method " + callbackRegisterMethod + " not found");
+				reject("method " + callbackRegisterMethod + " not found in HxExtWallet");
+				return;
+			}
 			HxExtWallet[callbackRegisterMethod](function (config) {
 				if (ended) {
 					return;
 				}
 				ended = true;
 				resolve(config);
-			});
+			}, data);
 			setTimeout(function () {
 				if (ended) {
 					return;
@@ -130,7 +135,36 @@ HxPay.prototype = {
 			}, timeout);
 		});
 	},
-
+	setConfig: function(chainId, networkKey) {
+		// 通知钱包DAPP使用的网络配置和chainId
+		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey}, 'setConfig', 10000);
+	},
+	onConnectedWallet: function() {
+		// 等待钱包注入的js执行完成
+		function isConnected() {
+			return typeof(HxExtWallet) !== 'undefined' || typeof(dsBridge) !== 'undefined';
+		}
+		return new Promise(function(resolve, reject) {
+			if(isConnected()) {
+				resolve();
+				return;
+			}
+			var count = 0;
+			var timer = setInterval(function() {
+				if(count>10) {
+					clearInterval(timer);
+					reject("timeout");
+					return;
+				}
+				count++;
+				if(isConnected()) {
+					clearInterval(timer);
+					resolve();
+					return;
+				}
+			}, 500);
+		});
+	},
 	getConfig: function () {
 		return this.postMessageRequest('getConfig', {}, 'getConfig', 10000).then(function (config) {
 			hxChainConfigCacheInHxPay = config;
