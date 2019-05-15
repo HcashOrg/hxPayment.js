@@ -142,7 +142,7 @@ HxPay.prototype = {
 	onConnectedWallet: function() {
 		// 等待钱包注入的js执行完成
 		function isConnected() {
-			return typeof(HxExtWallet) !== 'undefined' || typeof(dsBridge) !== 'undefined';
+			return typeof(HxExtWallet) !== 'undefined' || Utils.isAnybitMobile();
 		}
 		return new Promise(function(resolve, reject) {
 			if(isConnected()) {
@@ -151,12 +151,12 @@ HxPay.prototype = {
 			}
 			var count = 0;
 			var timer = setInterval(function() {
-				if(count>10) {
+				if(count > 10) {
 					clearInterval(timer);
 					reject("timeout");
 					return;
 				}
-				count++;
+				count ++;
 				if(isConnected()) {
 					clearInterval(timer);
 					resolve();
