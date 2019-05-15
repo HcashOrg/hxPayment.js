@@ -135,6 +135,9 @@ HxPay.prototype = {
 			}, timeout);
 		});
 	},
+	// chainId: if networkKey is mainnet, you can set it to '', or else set to your chainId
+	// networkKey: mainnet, testnet, regnet, etc...
+	// optionalNodeRpcUrl: if networkKey is mainnet, set to '', or else set to your node rpc endpoint, such as http://192.168.1.122:10046
 	setConfig: function(chainId, networkKey, optionalNodeRpcUrl) {
 		// 通知钱包DAPP使用的网络配置和chainId
 		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey, network: optionalNodeRpcUrl}, 'setConfig', 10000);
