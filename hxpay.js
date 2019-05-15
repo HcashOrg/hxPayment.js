@@ -135,12 +135,13 @@ HxPay.prototype = {
 			}, timeout);
 		});
 	},
-	// chainId: if networkKey is mainnet, you can set it to '', or else set to your chainId
+	// chainId: if networkKey is mainnet, you can set it to ''; or else set to your chainId
 	// networkKey: mainnet, testnet, regnet, etc...
-	// optionalNodeRpcUrl: if networkKey is mainnet, set to '', or else set to your node rpc endpoint, such as http://192.168.1.122:10046
-	setConfig: function(chainId, networkKey, optionalNodeRpcUrl) {
+	// optionalNodeRpcUrl: if networkKey is mainnet, set to ''; or else set to your node rpc endpoint, such as http://192.168.1.122:10046
+	// optionalNodeClientRpcUrl: if networkKey is mainnet, set to ''; or else set to your node client rpc endpoint, such as ws://192.168.1.121:30000
+	setConfig: function(chainId, networkKey, optionalNodeRpcUrl, optionalNodeClientRpcUrl) {
 		// 通知钱包DAPP使用的网络配置和chainId
-		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey, network: optionalNodeRpcUrl}, 'setConfig', 10000);
+		return this.postMessageRequest('setConfig', {chainId: chainId, networkKey: networkKey, network: optionalNodeRpcUrl, clientNetwork: optionalNodeClientRpcUrl}, 'setConfig', 10000);
 	},
 	onConnectedWallet: function() {
 		// 等待钱包注入的js执行完成
