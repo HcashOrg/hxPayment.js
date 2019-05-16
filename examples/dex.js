@@ -308,6 +308,35 @@ const app = new Vue({
                 listener: this.hxPayListener.bind(this)
             });
         },
+        cancelOrder(order) {
+            // 撤单
+            console.log("to cancel order", order)
+            const orderId = order.ExtraInfo.OrderId;
+            const orderRawStr = order.ExtraInfo.OrderInfoStr;
+            const orderSigHex = order.ExtraInfo.SigHex;
+            const cancelOrderStr = `{"type":"cancel","orderId":"${orderId}"}`;
+            // 请求钱包签名，签名结果交给撮合引擎撤单
+            hxPay.signBufferText(cancelOrderStr, {
+                listener: this.hxSigListener.bind(this)
+            });
+            bindOrderSigCallback(cancelOrderStr, (sig, err) => {
+                console.log("cancel order sig callback", sig, err);
+                // submit order info and sig to dex engine
+                this.requestDexRpc("CancelOrder", {
+                    orderInfoStr: orderRawStr,
+                    orderSigHex: orderSigHex, 
+                    cancelOrderSigHex: sig,
+                }).then(result => {
+                    console.log("cancel order result", result);
+                    this.showError("cancel order successfully");
+                    this.updateOrderbook();
+                    this.updateUserActiveOrders();
+                    this.updateLatestPrice();
+                    this.updateUserBalancesInDex();
+                }).catch(this.showError.bind(this));
+            });
+            
+        },
         addOrder(form, isBuy) {
             const tradeAsset = form.tradeAsset;
             const baseAsset = form.baseAsset;

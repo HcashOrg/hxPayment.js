@@ -27,6 +27,9 @@
             text-align: center;
             margin: 10px 0;
         }
+        #app .container {
+            max-width: 1000px;
+        }
     </style>
 </head>
 
@@ -70,7 +73,8 @@
                 </el-col>
                 <el-col :span="12">
                     <div>Price: <span>{{(latestMarketPrices[addOrderForm.marketPair] || 0) *
-                            addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision}}</span> <span>{{addOrderForm.baseAsset}}
+                            addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision}}</span>
+                        <span>{{addOrderForm.baseAsset}}
                             / {{addOrderForm.tradeAsset}}</span></div>
                     <div>
                         <h4>Order Book</h4>
@@ -79,16 +83,50 @@
                         <div>
                             <div class="-ask-panel-item" v-for="order in orderBook.asks">{{parseFloat(order.priceString)
                                 * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }} <span>{{order.payNum
-                                    / addOrderForm.baseAssetPrecision}}</span></div>
+                                    / addOrderForm.baseAssetPrecision}}</span>
+                            </div>
                         </div>
                         <div>-----------------------------------</div>
                         <div>
                             <div class="-bid-panel-item" v-for="order in orderBook.bids">{{parseFloat(order.priceString)
                                 * addOrderForm.tradeAssetPricision / addOrderForm.baseAssetPrecision }} <span>{{order.purchaseNum
-                                    / addOrderForm.baseAssetPrecision}}</span></div>
+                                    / addOrderForm.baseAssetPrecision}}</span>
+                            </div>
                         </div>
                     </div>
                 </el-col>
+            </el-row>
+            <el-row>
+
+                <div style="margin-top: 20px;">
+                    <h4>My Orders</h4>
+                    <div class="grid-content">
+                        <el-table :data="myActiveOrders" stripe style="width: 100%">
+                            <el-table-column prop="purchaseAsset" label="Purchase" width="180">
+                            </el-table-column>
+                            <el-table-column prop="purchaseNum" label="PurchaseAmount">
+                            </el-table-column>
+                            <el-table-column prop="payAsset" label="Pay" width="180">
+                            </el-table-column>
+                            <el-table-column prop="payNum" label="PayAmount">
+                            </el-table-column>
+                            <el-table-column prop="type" label="Type">
+                            </el-table-column>
+                            <el-table-column fixed="right" label="Finished" width="100">
+                                <template slot-scope="scope">
+                                    PurchaseFinished: {{scope.row.ExtraInfo.PurchaseFinishedNum}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column fixed="right" label="Op" width="100">
+                                <template slot-scope="scope">
+                                    <el-button @click="cancelOrder(scope.row)" type="danger" icon="el-icon-delete" circle>
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+
+                </div>
             </el-row>
         </div>
     </div>
