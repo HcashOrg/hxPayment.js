@@ -47,6 +47,9 @@ Pay.prototype = {
 		submitPayId(options);
 
 		if (Utils.isAnybitMobile()) {
+			if (des === 'confirmSignText' || des === 'confirmSignHex') {
+				params.method = 'confirmSign'
+			}
 			openAnyBitDapp(params, options);
 			return;
 		}
