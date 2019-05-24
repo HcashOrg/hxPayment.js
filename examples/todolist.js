@@ -33,45 +33,47 @@ const app = new Vue({
         myTodoList: [],
     },
     mounted() {
-        hxPay.getConfig()
-            .then((config) => {
-                console.log('config', config);
-                if (!config) {
-                    this.showError("please install hx extension wallet first");
-                    return;
-                }
+        hxPay.onConnectedWallet()
+            .then(() => {
+                hxPay.getConfig()
+                    .then((config) => {
+                        console.log('config', config);
+                        if (!config) {
+                            this.showError("please install hx extension wallet first");
+                            return;
+                        }
 
-                this.hxConfig = config;
-                ChainConfig.setChainId(config.chainId);
-                this.apisInstance = Apis.instance(config.network, true);
-                this.nodeClient = new NodeClient(this.apisInstance);
-                this.loadInfo();
-
-                hxPay.getUserAddress()
-                    .then(({ address, pubKey, pubKeyString }) => {
-                        console.log('address', address);
-                        console.log('pubKey', pubKey);
-                        console.log('pubKeyStr', pubKeyString);
-                        this.myAddress = address;
-                        this.queryForm.address = address;
-                        this.myPubKey = pubKey;
+                        this.hxConfig = config;
+                        ChainConfig.setChainId(config.chainId);
+                        this.apisInstance = Apis.instance(config.network, true);
+                        this.nodeClient = new NodeClient(this.apisInstance);
                         this.loadInfo();
+
+                        hxPay.getUserAddress()
+                            .then(({ address, pubKey, pubKeyString }) => {
+                                console.log('address', address);
+                                console.log('pubKey', pubKey);
+                                console.log('pubKeyStr', pubKeyString);
+                                this.myAddress = address;
+                                this.queryForm.address = address;
+                                this.myPubKey = pubKey;
+                                this.loadInfo();
+                            }, (err) => {
+                                this.showError(err);
+                            });
+
                     }, (err) => {
+                        console.log('get config error', err);
                         this.showError(err);
-                    });
+                        const config = hxPay.defaultConfig;
 
-            }, (err) => {
-                console.log('get config error', err);
-                this.showError(err);
-                const config = hxPay.defaultConfig;
-
-                this.hxConfig = config;
-                ChainConfig.setChainId(config.chainId);
-                this.apisInstance = Apis.instance(config.network, true);
-                this.nodeClient = new NodeClient(this.apisInstance);
-                this.loadInfo();
-            })
-
+                        this.hxConfig = config;
+                        ChainConfig.setChainId(config.chainId);
+                        this.apisInstance = Apis.instance(config.network, true);
+                        this.nodeClient = new NodeClient(this.apisInstance);
+                        this.loadInfo();
+                    })
+            });
     },
     methods: {
         waitTxByPayId(payId) {
@@ -101,7 +103,7 @@ const app = new Vue({
                         alert("transaction successfully");
                         this.loadInfo();
                     }, this.showError);
-            } else if(name ==='sig') {
+            } else if (name === 'sig') {
                 const sigHex = resp;
                 console.log("got sig", sigHex);
                 this.showError("Siganture: " + sigHex);
