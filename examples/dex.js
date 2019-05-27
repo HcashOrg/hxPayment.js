@@ -366,7 +366,7 @@ const app = new Vue({
                 relayer: 'HXTNa5ZMhvFYXSYN4E2sAKqDVBKZgU9AGEBfZ',
                 fee: "0",
                 type: isBuy ? "buy" : "sell",
-                expiredAt: parseInt(new Date().getTime() / 1000 + 3600),
+                expiredAt: parseInt(new Date().getTime() / 1000 + 3600 * 24), // 1 day
                 version: 1,
             };
             const orderStr = JSON.stringify(orderInfo);
