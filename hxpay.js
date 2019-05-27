@@ -18,7 +18,7 @@ var defaultOptions = function () {
 	return {
 		goods: {
 			name: "",
-			desc: "",
+			desc: {},
 			orderId: "",
 			ext: ""
 		},
