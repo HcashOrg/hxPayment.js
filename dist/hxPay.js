@@ -419,6 +419,9 @@ Pay.prototype = {
 		submitPayId(options);
 
 		if (Utils.isAnybitMobile()) {
+			if (des === 'confirmSignText' || des === 'confirmSignHex') {
+				params.method = 'confirmSign';
+			}
 			openAnyBitDapp(params, options);
 			return;
 		}
@@ -9041,6 +9044,10 @@ HxPay.prototype = {
 			}, timeout);
 		});
 	},
+	// chainId: if networkKey is mainnet, you can set it to ''; or else set to your chainId
+	// networkKey: mainnet, testnet, regnet, etc...
+	// optionalNodeRpcUrl: if networkKey is mainnet, set to ''; or else set to your node rpc endpoint, such as http://192.168.1.122:10046
+	// optionalNodeClientRpcUrl: if networkKey is mainnet, set to ''; or else set to your node client rpc endpoint, such as ws://192.168.1.121:30000
 	setConfig: function (chainId, networkKey, optionalNodeRpcUrl, optionalNodeClientRpcUrl) {
 		// 通知钱包DAPP使用的网络配置和chainId
 		return this.postMessageRequest('setConfig', { chainId: chainId, networkKey: networkKey, network: optionalNodeRpcUrl, clientNetwork: optionalNodeClientRpcUrl }, 'setConfig', 10000);
