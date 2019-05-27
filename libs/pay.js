@@ -107,10 +107,10 @@ Pay.prototype = {
 		return this.submitParamsToWallet(params, "confirmSignHex", options);
 	},
 	/*jshint maxcomplexity:18 */
-	submit: function (currency, to, value, payload, options) {
+	submit: function (currency, to, valueRaw, payload, options) {
 		options.serialNumber = Utils.randomCode(32);
-		value = value || "0";
-		var amount = new BigNumber(value).times("100000");//10^5 HX's asset precision = 100000
+		valueRaw = valueRaw || "0";
+		// var amount = new BigNumber(valueRaw).times("100000");//10^5 HX's asset precision = 100000
 
 		var gasLimitBN, gasPriceBN;
 		if (!!options.gasLimit) {
@@ -133,8 +133,8 @@ Pay.prototype = {
 			pay: {
 				currency: currency,
 				to: to,
-				value: amount.toString(10),
-				valueRaw: value,
+				// value: amount.toString(10),
+				valueRaw: valueRaw,
 				memo: payload.memo,
 				payload: payload,
 				gasLimit: !!gasLimitBN ? gasLimitBN.toString(10) : undefined,

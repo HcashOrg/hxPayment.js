@@ -104,7 +104,7 @@ const app = new Vue({
             .then(() => {
                 var assetId = "1.3.0";
                 var to = this.contractAddress;
-                var value = 10;
+                var value = 1;
                 hxPay.transferToContract(assetId, to, value, [], {
                     gasPrice: '0.00001',
                     gasLimit: 5000,
