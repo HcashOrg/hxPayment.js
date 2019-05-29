@@ -419,7 +419,9 @@ function submitPayId(options) {
 Pay.prototype = {
 	/*jshint maxcomplexity:18 */
 	submitParamsToWallet: function (params, des, options) {
-		submitPayId(options);
+		setTimeout(function () {
+			submitPayId(options);
+		});
 
 		if (Utils.isAnybitMobile()) {
 			if (des === 'confirmSignText' || des === 'confirmSignHex') {
