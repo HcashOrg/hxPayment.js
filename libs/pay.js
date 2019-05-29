@@ -59,7 +59,7 @@ Pay.prototype = {
 			return;
 		}
 
-		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
+		if (Utils.isChrome() && !Utils.isAnybitMobile() && options.extension.openExtension) {
 			if (Utils.isExtInstalled())
 				openExtension(params);
 			else {

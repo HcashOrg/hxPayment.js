@@ -431,7 +431,7 @@ Pay.prototype = {
 			return;
 		}
 
-		if (Utils.isChrome() && !Utils.isMobile() && options.extension.openExtension) {
+		if (Utils.isChrome() && !Utils.isAnybitMobile() && options.extension.openExtension) {
 			if (Utils.isExtInstalled()) openExtension(params);else {
 				//window.alert("HxExtWallet is not installed.");
 				if (window.confirm('HxExtWallet is not installed. Click "ok" to install it.')) {
