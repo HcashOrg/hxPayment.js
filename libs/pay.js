@@ -36,6 +36,9 @@ function submitPayId(options) {
 			method: 'SendPayId',
 			params: [options.serialNumber]
 		}));
+		xhr.onerror = function(err) {
+			console.log("submit payId error", err);
+		};
 	} catch (e) {
 		console.log(e);
 	}
