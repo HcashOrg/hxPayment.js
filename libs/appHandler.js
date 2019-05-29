@@ -12,7 +12,7 @@ function openApp(appParams, options) {
     // ifr.src = url;
     // ifr.style.display='none';
 
-    if(!Utils.isMobile() && options.mobile.showInstallTip) {
+    if(!Utils.isAnybitMobile() && options.mobile.showInstallTip) {
         checkOpen(function(opened) {
             if (!opened) {
                 //showNanoInstallTip(options);
