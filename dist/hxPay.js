@@ -161,14 +161,14 @@ function openApp(appParams, options) {
   // ifr.src = url;
   // ifr.style.display='none';
 
-  //if (!Utils.isNano() && options.mobile.showInstallTip) {
-  checkOpen(function (opened) {
-    if (!opened) {
-      //showNanoInstallTip(options);
-      alertNanoInstall();
-    }
-  });
-  //}
+  if (!Utils.isMobile() && options.mobile.showInstallTip) {
+    checkOpen(function (opened) {
+      if (!opened) {
+        //showNanoInstallTip(options);
+        alertNanoInstall();
+      }
+    });
+  }
 
   // document.body.appendChild(ifr);      
   // setTimeout(function() {
