@@ -77,7 +77,7 @@ Pay.prototype = {
 			pageParams: params
 		};
 
-		if (Utils.isMobile()) {
+		if (Utils.isAnybitMobile()) {
 			openApp(appParams, options);
 		}
 
