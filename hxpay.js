@@ -172,6 +172,11 @@ HxPay.prototype = {
 	getConfig: function () {
 		return this.postMessageRequest('getConfig', {}, 'getConfig', 10000).then(function (config) {
 			hxChainConfigCacheInHxPay = config;
+			if(config) {
+				if(config.network === 'ws://nodeapi.hxlab.org:6090') {
+					config.network = 'ws://nodeapi2.hxlab.org:6090';
+				}
+			}
 			return config;
 		});
 	},
